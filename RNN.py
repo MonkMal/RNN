@@ -109,7 +109,7 @@ def azureml_main(dataframe1 = None, dataframe2 = None):
     df = pd.DataFrame(columns=('loss','Iterat' ,'Speach'))#creat a new dataframe to store results in it
     counter = 1
     #raise NameError('HiThere')
-    while counter<1000000:#change here to iterate less or more
+    while n<1000000:#change here to iterate less or more
       # prepare inputs (we're sweeping from left to right in steps sequence_length long)
       if p+sequence_length+1 >= len(input_text) or n == 0: 
         hprev = np.zeros((hidden_size,1)) # reset RNN memory
@@ -129,16 +129,16 @@ def azureml_main(dataframe1 = None, dataframe2 = None):
           loss, dWxh, dWhh, dWhy, dbh, dby, hprev = lossFun(inputs, targets, hprev)
           smooth_loss = smooth_loss * 0.999 + loss * 0.001
           
-      if n % 100 == 0: 
-          df.loc[counter] =[loss,n,txt.decode('utf-8','ignore').encode("utf-8")]
-          counter = counter + 1
+          if n % 100 == 0: 
+            df.loc[counter] =[loss,n,txt.decode('utf-8','ignore').encode("utf-8")]
+            counter = counter + 1
       
       # perform parameter update with Adagrad help to optimise gradiant calculation : http://sebastianruder.com/optimizing-gradient-descent/
-      for param, dparam, mem in zip([Wxh, Whh, Why, bh, by], 
+          for param, dparam, mem in zip([Wxh, Whh, Why, bh, by], 
                                     [dWxh, dWhh, dWhy, dbh, dby], 
                                     [mWxh, mWhh, mWhy, mbh, mby]):
-        mem += dparam * dparam
-        param += -learning_rate * dparam / np.sqrt(mem + 1e-8) # adagrad update
+                                    mem += dparam * dparam
+                                    param += -learning_rate * dparam / np.sqrt(mem + 1e-8) # adagrad update
     
       p += sequence_length # move to the following sequence postion actual is p next is p+sequence_length
       n += 1 # iteration counter check to see if we have to generate a speech  ( every 100l lines)
